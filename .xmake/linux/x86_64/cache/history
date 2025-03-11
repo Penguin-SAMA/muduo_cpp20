@@ -1,0 +1,81 @@
+{
+    cmdlines = {
+        "xmake lua --command \"\9\9\9import(\\\"core.base.json\\\")\
+\9\9\9import(\\\"core.project.config\\\")\
+\9\9\9import(\\\"core.project.project\\\")\
+\
+\9\9\9config.load()\
+\9\9\9local targets = {}\
+\9\9\9for name, _ in pairs(project.targets()) do\
+\9\9\9\9table.insert(targets, name)\
+\9\9\9end\
+            table.insert(targets, \\\"all\\\")\
+\9\9\9print(json.encode({ list = targets }))\
+\9\9\"",
+        "xmake project --kind=compile_commands build",
+        "xmake lua --command \"\9\9\9import(\\\"core.base.json\\\")\
+\9\9\9import(\\\"core.project.config\\\")\
+\9\9\9import(\\\"core.project.project\\\")\
+\
+\9\9\9config.load()\
+\9\9\9local targets = {}\
+\9\9\9for name, _ in pairs(project.targets()) do\
+\9\9\9\9table.insert(targets, name)\
+\9\9\9end\
+            table.insert(targets, \\\"all\\\")\
+\9\9\9print(json.encode({ list = targets }))\
+\9\9\"",
+        "xmake project --kind=compile_commands build",
+        "xmake lua --command \"\9\9\9import(\\\"core.base.json\\\")\
+\9\9\9import(\\\"core.project.config\\\")\
+\9\9\9import(\\\"core.project.project\\\")\
+\
+\9\9\9config.load()\
+\9\9\9local targets = {}\
+\9\9\9for name, _ in pairs(project.targets()) do\
+\9\9\9\9table.insert(targets, name)\
+\9\9\9end\
+            table.insert(targets, \\\"all\\\")\
+\9\9\9print(json.encode({ list = targets }))\
+\9\9\"",
+        "xmake project --kind=compile_commands build",
+        "xmake lua --command \"\9\9\9import(\\\"core.base.json\\\")\
+\9\9\9import(\\\"core.project.config\\\")\
+\9\9\9import(\\\"core.project.project\\\")\
+\
+\9\9\9config.load()\
+\9\9\9local targets = {}\
+\9\9\9for name, _ in pairs(project.targets()) do\
+\9\9\9\9table.insert(targets, name)\
+\9\9\9end\
+            table.insert(targets, \\\"all\\\")\
+\9\9\9print(json.encode({ list = targets }))\
+\9\9\"",
+        "xmake project --kind=compile_commands build",
+        "xmake lua --command \"\9\9\9import(\\\"core.base.json\\\")\
+\9\9\9import(\\\"core.project.config\\\")\
+\9\9\9import(\\\"core.project.project\\\")\
+\
+\9\9\9config.load()\
+\9\9\9local targets = {}\
+\9\9\9for name, _ in pairs(project.targets()) do\
+\9\9\9\9table.insert(targets, name)\
+\9\9\9end\
+            table.insert(targets, \\\"all\\\")\
+\9\9\9print(json.encode({ list = targets }))\
+\9\9\"",
+        "xmake project --kind=compile_commands build",
+        "xmake lua --command \"\9\9\9import(\\\"core.base.json\\\")\
+\9\9\9import(\\\"core.project.config\\\")\
+\9\9\9import(\\\"core.project.project\\\")\
+\
+\9\9\9config.load()\
+\9\9\9local targets = {}\
+\9\9\9for name, _ in pairs(project.targets()) do\
+\9\9\9\9table.insert(targets, name)\
+\9\9\9end\
+            table.insert(targets, \\\"all\\\")\
+\9\9\9print(json.encode({ list = targets }))\
+\9\9\""
+    }
+}
