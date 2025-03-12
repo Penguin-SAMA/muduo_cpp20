@@ -1,0 +1,17 @@
+
+# 编译输出
+build/
+out/
+*.obj
+*.o
+*.exe
+*.dll
+*.so
+*.dylib
+
+# 临时文件
+*.tmp
+*.log
+
+# Xmake 缓存
+.xmake/
