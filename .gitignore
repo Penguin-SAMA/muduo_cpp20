@@ -15,4 +15,4 @@ out/
 
 # 忽略 xmake 缓存
 .xmake/
-
+.cache/
