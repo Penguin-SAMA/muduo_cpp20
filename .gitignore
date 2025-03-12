@@ -1,5 +1,5 @@
 
-# 编译输出
+# 忽略编译输出
 build/
 out/
 *.obj
@@ -9,9 +9,10 @@ out/
 *.so
 *.dylib
 
-# 临时文件
+# 忽略临时文件
 *.tmp
 *.log
 
-# Xmake 缓存
+# 忽略 xmake 缓存
 .xmake/
+
