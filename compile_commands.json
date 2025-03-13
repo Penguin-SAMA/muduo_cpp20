@@ -1,6 +1,11 @@
 [
 {
   "directory": "/home/penguin/code/muduo_cpp20",
+  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DNDEBUG", "-o", "build/.objs/muduo_tests/linux/x86_64/release/test/test_eventloop.cpp.o", "test/test_eventloop.cpp"],
+  "file": "test/test_eventloop.cpp"
+},
+{
+  "directory": "/home/penguin/code/muduo_cpp20",
   "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DNDEBUG", "-o", "build/.objs/muduo_tests/linux/x86_64/release/test/test_timestamp.cpp.o", "test/test_timestamp.cpp"],
   "file": "test/test_timestamp.cpp"
 },
@@ -8,4 +13,14 @@
   "directory": "/home/penguin/code/muduo_cpp20",
   "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DNDEBUG", "-o", "build/.objs/muduo_cpp20/linux/x86_64/release/muduo/base/Timestamp.cpp.o", "muduo/base/Timestamp.cpp"],
   "file": "muduo/base/Timestamp.cpp"
+},
+{
+  "directory": "/home/penguin/code/muduo_cpp20",
+  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DNDEBUG", "-o", "build/.objs/muduo_cpp20/linux/x86_64/release/muduo/net/EventLoop.cpp.o", "muduo/net/EventLoop.cpp"],
+  "file": "muduo/net/EventLoop.cpp"
+},
+{
+  "directory": "/home/penguin/code/muduo_cpp20",
+  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DNDEBUG", "-o", "build/.objs/muduo_cpp20/linux/x86_64/release/muduo/net/Channel.cpp.o", "muduo/net/Channel.cpp"],
+  "file": "muduo/net/Channel.cpp"
 }]
