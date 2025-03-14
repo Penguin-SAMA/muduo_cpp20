@@ -1,11 +1,12 @@
 #pragma once
 
+#include "Channel.h"
+#include "Poller.h"
 #include <atomic>
-#include <chrono>
 #include <functional>
+#include <memory>
 #include <mutex>
 #include <queue>
-#include <thread>
 
 namespace muduo {
 namespace net {
@@ -21,6 +22,8 @@ public:
     void loop();
     void quit();
     void runInLoop(Functor cb);
+    void updateChannel(Channel* channel);
+    void removeChannel(Channel* channel);
 
 private:
     // 执行所有待执行任务
@@ -31,6 +34,8 @@ private:
 
     std::mutex mutex_;
     std::queue<Functor> pendingFunctors_;
+
+    std::unique_ptr<Poller> poller_;
 };
 
 }

@@ -11,6 +11,7 @@ target("muduo_cpp20")
     set_kind("static")
     add_includedirs("muduo/base", "muduo/net")
     add_files("muduo/base/*.cpp", "muduo/net/*.cpp")
+    add_files("muduo/net/poller/*.cpp")
     add_packages("spdlog")
 
 target("muduo_tests")

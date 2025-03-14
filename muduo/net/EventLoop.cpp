@@ -1,16 +1,19 @@
 #include "EventLoop.h"
+#include "Channel.h"
+#include "poller/EpollPoller.h"
 #include <chrono>
-#include <iostream>
 #include <mutex>
 #include <queue>
 #include <thread>
+#include <vector>
 
 namespace muduo {
 namespace net {
 
 EventLoop::EventLoop()
     : looping_(false)
-    , quit_(false) {
+    , quit_(false)
+    , poller_(std::make_unique<EpollPoller>(this)) {
 }
 
 EventLoop::~EventLoop() {
@@ -22,9 +25,13 @@ void EventLoop::loop() {
 
     // 事件循环
     while (!quit_) {
-        // 实际实现中会调用 I/O 多路复用来等待事件
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        // 执行所有待执行任务
+        std::vector<Channel*> activeChannels;
+        poller_->poll(10000, &activeChannels);
+
+        for (auto channel : activeChannels) {
+            channel->handleEvent();
+        }
+
         doPendingFunctors();
     }
 
@@ -52,6 +59,14 @@ void EventLoop::doPendingFunctors() {
         functors.front()();
         functors.pop();
     }
+}
+
+void EventLoop::updateChannel(Channel* channel) {
+    poller_->updateChannel(channel);
+}
+
+void EventLoop::removeChannel(Channel* channel) {
+    poller_->removeChannel(channel);
 }
 
 }
