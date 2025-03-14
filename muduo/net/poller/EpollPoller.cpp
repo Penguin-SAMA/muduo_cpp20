@@ -1,6 +1,7 @@
 #include "EpollPoller.h"
 #include "Logging.h"
 #include <cassert>
+#include <cerrno>
 #include <cstddef>
 #include <cstring>
 #include <sys/epoll.h>
@@ -30,7 +31,11 @@ void EpollPoller::poll(int timeoutMs, ChannelList* activeChannels) {
     } else if (numEvents == 0) {
         LOG_TRACE("epoll_wait timeout");
     } else {
-        LOG_ERROR("epoll_wait error: {}", strerror(errno));
+        if (errno == EINTR) {
+            LOG_WARN("epoll_wait interrupt by signal, continue polling");
+        } else {
+            LOG_ERROR("epoll_wait error: {}", strerror(errno));
+        }
     }
 }
 

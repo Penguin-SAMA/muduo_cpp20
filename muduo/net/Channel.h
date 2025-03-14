@@ -6,6 +6,8 @@
 namespace muduo {
 namespace net {
 
+class EventLoop;
+
 // Channel 负责封装一个文件描述符以及其关心的IO事件
 // 并在事件就绪时调用对应的回调函数
 // 关键点：
@@ -18,7 +20,7 @@ public:
     using EventCallback = std::function<void()>;
 
     // @param fd 文件描述符
-    Channel(int fd);
+    Channel(EventLoop* loop, int fd);
     ~Channel();
 
     // 设置可读事件回调函数
@@ -44,11 +46,15 @@ public:
     // 返回fd
     int fd() const { return fd_; }
 
+    void disableAll();
+    void update();
+
 private:
     // 用于处理事件的函数，内部会调用handleEvent
     void handleEventWithGuard();
 
 private:
+    EventLoop* loop_;
     const int fd_; // 文件描述符
     int events_;   // 关心的事件
     int revents_;  // 就绪的事件

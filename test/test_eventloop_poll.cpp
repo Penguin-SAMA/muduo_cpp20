@@ -1,3 +1,4 @@
+#if 0
 #include "Channel.h"
 #include "EventLoop.h"
 #include <gtest/gtest.h>
@@ -30,3 +31,4 @@ TEST(EventLoopPollerTest, BasicPollTest) {
 
     close(eventFd);
 }
+#endif

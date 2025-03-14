@@ -1,12 +1,14 @@
 #include "Channel.h"
+#include "EventLoop.h"
 
 namespace muduo {
 namespace net {
 
 // 只对 fd 做简单的引用，不负责关闭 fd
 // 所以构造函数不负责打开 fd，析构函数不负责关闭 fd
-Channel::Channel(int fd)
-    : fd_(fd)
+Channel::Channel(EventLoop* loop, int fd)
+    : loop_(loop)
+    , fd_(fd)
     , events_(0)
     , revents_(0) {
 }
@@ -39,6 +41,15 @@ void Channel::handleEventWithGuard() {
             writeCallback_();
         }
     }
+}
+
+void Channel::disableAll() {
+    events_ = 0;
+    update();
+}
+
+void Channel::update() {
+    loop_->updateChannel(this);
 }
 
 }
