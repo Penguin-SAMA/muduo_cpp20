@@ -32,10 +32,10 @@ private:
     void handleRead();
 
 private:
-    EventLoop* loop_;
-    Socket acceptSocket_;
-    Channel acceptChannel_;
-    NewConnectionCallback newConnectionCallback_;
+    EventLoop* loop_;                             // 所属事件循环
+    Socket acceptSocket_;                         // 监听套接字
+    Channel acceptChannel_;                       // 与监听套接字绑定的Channel
+    NewConnectionCallback newConnectionCallback_; // 上层回调
     bool listenning_;
 };
 

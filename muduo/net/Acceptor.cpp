@@ -26,7 +26,9 @@ Acceptor::~Acceptor() {
 void Acceptor::listen() {
     listenning_ = true;
     acceptSocket_.listen();
+    // 关注可读事件
     acceptChannel_.setEvents(EPOLLIN);
+    // 将监听socket注册到epoll
     loop_->updateChannel(&acceptChannel_);
 }
 
