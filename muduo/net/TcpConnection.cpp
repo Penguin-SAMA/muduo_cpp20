@@ -1,9 +1,12 @@
 #include "TcpConnection.h"
 #include "Channel.h"
 #include "Logging.h"
+#include <cstddef>
+#include <cstring>
 #include <memory>
 #include <sys/epoll.h>
 #include <sys/types.h>
+#include <system_error>
 #include <unistd.h>
 
 namespace muduo {
@@ -32,9 +35,24 @@ TcpConnection::~TcpConnection() {
 
 void TcpConnection::send(const std::string& message) {
     if (state_ == kConnected) {
-        outputBuffer_.append(message);
-        channel_->setEvents(EPOLLIN | EPOLLOUT);
-        loop_->updateChannel(channel_.get());
+        if (!channel_->isWriting() && outputBuffer_.readableBytes() == 0) {
+            ssize_t n = ::write(channel_->fd(), message.data(), message.size());
+            if (n >= 0) {
+                size_t remaining = message.size() - n;
+                if (remaining > 0) {
+                    outputBuffer_.append(message.data() + n, remaining);
+                    channel_->enableWriting();
+                    loop_->updateChannel(channel_.get());
+                } else {
+                }
+            } else {
+                outputBuffer_.append(message.data(), message.size());
+                channel_->enableWriting();
+                loop_->updateChannel(channel_.get());
+            }
+        } else {
+            outputBuffer_.append(message.data(), message.size());
+        }
     }
 }
 
@@ -63,13 +81,13 @@ void TcpConnection::connectDestroyed() {
 }
 
 void TcpConnection::handleRead() {
-    char buf[4096];
-    ssize_t n = ::read(channel_->fd(), buf, sizeof(buf));
+    int savedErrno = 0;
+    ssize_t n = inputBuffer_.readFd(channel_->fd(), &savedErrno);
     if (n > 0) {
-        inputBuffer_.append(buf, n);
+        std::string msg(inputBuffer_.peek(), inputBuffer_.readableBytes());
+        inputBuffer_.retrieveAll();
         if (messageCallback_) {
-            messageCallback_(shared_from_this(), inputBuffer_);
-            inputBuffer_.clear();
+            messageCallback_(shared_from_this(), msg);
         }
     } else if (n == 0) {
         handleClose();
@@ -79,15 +97,17 @@ void TcpConnection::handleRead() {
 }
 
 void TcpConnection::handleWrite() {
-    ssize_t n = ::write(channel_->fd(), outputBuffer_.data(), outputBuffer_.size());
-    if (n > 0) {
-        outputBuffer_ = outputBuffer_.substr(n);
-        if (outputBuffer_.empty()) {
-            channel_->setEvents(EPOLLIN);
-            loop_->updateChannel(channel_.get());
+    if (channel_->isWriting()) {
+        ssize_t n = ::write(channel_->fd(), outputBuffer_.peek(), outputBuffer_.readableBytes());
+        if (n > 0) {
+            outputBuffer_.retrieve(n);
+            if (outputBuffer_.readableBytes() == 0) {
+                channel_->disableWriting();
+                loop_->updateChannel(channel_.get());
+            }
+        } else {
+            LOG_ERROR("TcpConnection::handleWrite error: {}", strerror(errno));
         }
-    } else {
-        LOG_ERROR("TcpConnection::handleWrite error");
     }
 }
 

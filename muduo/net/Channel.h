@@ -2,6 +2,8 @@
 
 #include <functional>
 #include <memory>
+#include <netinet/in.h>
+#include <sys/epoll.h>
 
 namespace muduo {
 namespace net {
@@ -42,6 +44,26 @@ public:
     // 设置fd上的事件
     void setRevents(int revents) { revents_ = revents; }
     int revents() const { return revents_; }
+
+    bool isWriting() const { return events_ & EPOLLOUT; }
+    bool isReading() const { return events_ & EPOLLIN; }
+    bool isNoneEvent() const { return events_ == 0; }
+    void enableWriting() {
+        events_ |= EPOLLOUT;
+        update();
+    }
+    void disableWriting() {
+        events_ &= ~EPOLLOUT;
+        update();
+    }
+    void enableReading() {
+        events_ |= EPOLLIN;
+        update();
+    }
+    void disableReading() {
+        events_ &= ~EPOLLIN;
+        update();
+    }
 
     // 返回fd
     int fd() const { return fd_; }

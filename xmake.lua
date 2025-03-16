@@ -16,7 +16,7 @@ target("muduo_cpp20")
 
 target("muduo_tests")
     set_kind("binary")
-    add_files("test/test_tcpserver.cpp")
+    add_files("test/test_buffer.cpp")
     add_deps("muduo_cpp20")
     add_links("pthread", "gtest", "gtest_main")
     add_includedirs("muduo/base", "muduo/net")

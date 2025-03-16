@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Buffer.h"
 #include "Channel.h"
 #include "EventLoop.h"
 #include "InetAddress.h"
@@ -71,8 +72,8 @@ private:
     MessageCallback messageCallback_;
     CloseCallback closeCallback_;
 
-    std::string inputBuffer_;
-    std::string outputBuffer_;
+    Buffer inputBuffer_;
+    Buffer outputBuffer_;
 };
 
 }
