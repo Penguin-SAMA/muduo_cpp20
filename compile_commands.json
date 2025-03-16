@@ -1,26 +1,96 @@
 [
 {
   "directory": "/home/penguin/code/muduo_cpp20",
-  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DNDEBUG", "-o", "build/.objs/muduo_tests/linux/x86_64/release/test/test_eventloop.cpp.o", "test/test_eventloop.cpp"],
+  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DSPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE", "-DSPDLOG_DEBUG", "-DSPDLOG_SHARED_LIB", "-DSPDLOG_COMPILED_LIB", "-DSPDLOG_FMT_EXTERNAL", "-o", "build/.objs/muduo_tests/linux/x86_64/debug/test/test_connection.cpp.o", "test/test_connection.cpp"],
+  "file": "test/test_connection.cpp"
+},
+{
+  "directory": "/home/penguin/code/muduo_cpp20",
+  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DSPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE", "-DSPDLOG_DEBUG", "-DSPDLOG_SHARED_LIB", "-DSPDLOG_COMPILED_LIB", "-DSPDLOG_FMT_EXTERNAL", "-o", "build/.objs/muduo_tests/linux/x86_64/debug/test/test_eventloop_poll.cpp.o", "test/test_eventloop_poll.cpp"],
+  "file": "test/test_eventloop_poll.cpp"
+},
+{
+  "directory": "/home/penguin/code/muduo_cpp20",
+  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DSPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE", "-DSPDLOG_DEBUG", "-DSPDLOG_SHARED_LIB", "-DSPDLOG_COMPILED_LIB", "-DSPDLOG_FMT_EXTERNAL", "-o", "build/.objs/muduo_tests/linux/x86_64/debug/test/test_eventloop.cpp.o", "test/test_eventloop.cpp"],
   "file": "test/test_eventloop.cpp"
 },
 {
   "directory": "/home/penguin/code/muduo_cpp20",
-  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DNDEBUG", "-o", "build/.objs/muduo_tests/linux/x86_64/release/test/test_timestamp.cpp.o", "test/test_timestamp.cpp"],
+  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DSPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE", "-DSPDLOG_DEBUG", "-DSPDLOG_SHARED_LIB", "-DSPDLOG_COMPILED_LIB", "-DSPDLOG_FMT_EXTERNAL", "-o", "build/.objs/muduo_tests/linux/x86_64/debug/test/test_channel.cpp.o", "test/test_channel.cpp"],
+  "file": "test/test_channel.cpp"
+},
+{
+  "directory": "/home/penguin/code/muduo_cpp20",
+  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DSPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE", "-DSPDLOG_DEBUG", "-DSPDLOG_SHARED_LIB", "-DSPDLOG_COMPILED_LIB", "-DSPDLOG_FMT_EXTERNAL", "-o", "build/.objs/muduo_tests/linux/x86_64/debug/test/test_timestamp.cpp.o", "test/test_timestamp.cpp"],
   "file": "test/test_timestamp.cpp"
 },
 {
   "directory": "/home/penguin/code/muduo_cpp20",
-  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DNDEBUG", "-o", "build/.objs/muduo_cpp20/linux/x86_64/release/muduo/base/Timestamp.cpp.o", "muduo/base/Timestamp.cpp"],
+  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DSPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE", "-DSPDLOG_DEBUG", "-DSPDLOG_SHARED_LIB", "-DSPDLOG_COMPILED_LIB", "-DSPDLOG_FMT_EXTERNAL", "-o", "build/.objs/muduo_tests/linux/x86_64/debug/test/test_poller.cpp.o", "test/test_poller.cpp"],
+  "file": "test/test_poller.cpp"
+},
+{
+  "directory": "/home/penguin/code/muduo_cpp20",
+  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DSPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE", "-DSPDLOG_DEBUG", "-DSPDLOG_SHARED_LIB", "-DSPDLOG_COMPILED_LIB", "-DSPDLOG_FMT_EXTERNAL", "-o", "build/.objs/muduo_tests/linux/x86_64/debug/test/test_acceptor.cpp.o", "test/test_acceptor.cpp"],
+  "file": "test/test_acceptor.cpp"
+},
+{
+  "directory": "/home/penguin/code/muduo_cpp20",
+  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DSPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE", "-DSPDLOG_DEBUG", "-DSPDLOG_SHARED_LIB", "-DSPDLOG_COMPILED_LIB", "-DSPDLOG_FMT_EXTERNAL", "-o", "build/.objs/muduo_tests/linux/x86_64/debug/test/test_logging.cpp.o", "test/test_logging.cpp"],
+  "file": "test/test_logging.cpp"
+},
+{
+  "directory": "/home/penguin/code/muduo_cpp20",
+  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DSPDLOG_SHARED_LIB", "-DSPDLOG_COMPILED_LIB", "-DSPDLOG_FMT_EXTERNAL", "-o", "build/.objs/muduo_cpp20/linux/x86_64/debug/muduo/base/Logging.cpp.o", "muduo/base/Logging.cpp"],
+  "file": "muduo/base/Logging.cpp"
+},
+{
+  "directory": "/home/penguin/code/muduo_cpp20",
+  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DSPDLOG_SHARED_LIB", "-DSPDLOG_COMPILED_LIB", "-DSPDLOG_FMT_EXTERNAL", "-o", "build/.objs/muduo_cpp20/linux/x86_64/debug/muduo/base/Timestamp.cpp.o", "muduo/base/Timestamp.cpp"],
   "file": "muduo/base/Timestamp.cpp"
 },
 {
   "directory": "/home/penguin/code/muduo_cpp20",
-  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DNDEBUG", "-o", "build/.objs/muduo_cpp20/linux/x86_64/release/muduo/net/EventLoop.cpp.o", "muduo/net/EventLoop.cpp"],
+  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DSPDLOG_SHARED_LIB", "-DSPDLOG_COMPILED_LIB", "-DSPDLOG_FMT_EXTERNAL", "-o", "build/.objs/muduo_cpp20/linux/x86_64/debug/muduo/net/Acceptor.cpp.o", "muduo/net/Acceptor.cpp"],
+  "file": "muduo/net/Acceptor.cpp"
+},
+{
+  "directory": "/home/penguin/code/muduo_cpp20",
+  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DSPDLOG_SHARED_LIB", "-DSPDLOG_COMPILED_LIB", "-DSPDLOG_FMT_EXTERNAL", "-o", "build/.objs/muduo_cpp20/linux/x86_64/debug/muduo/net/InetAddress.cpp.o", "muduo/net/InetAddress.cpp"],
+  "file": "muduo/net/InetAddress.cpp"
+},
+{
+  "directory": "/home/penguin/code/muduo_cpp20",
+  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DSPDLOG_SHARED_LIB", "-DSPDLOG_COMPILED_LIB", "-DSPDLOG_FMT_EXTERNAL", "-o", "build/.objs/muduo_cpp20/linux/x86_64/debug/muduo/net/TcpConnection.cpp.o", "muduo/net/TcpConnection.cpp"],
+  "file": "muduo/net/TcpConnection.cpp"
+},
+{
+  "directory": "/home/penguin/code/muduo_cpp20",
+  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DSPDLOG_SHARED_LIB", "-DSPDLOG_COMPILED_LIB", "-DSPDLOG_FMT_EXTERNAL", "-o", "build/.objs/muduo_cpp20/linux/x86_64/debug/muduo/net/TcpServer.cpp.o", "muduo/net/TcpServer.cpp"],
+  "file": "muduo/net/TcpServer.cpp"
+},
+{
+  "directory": "/home/penguin/code/muduo_cpp20",
+  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DSPDLOG_SHARED_LIB", "-DSPDLOG_COMPILED_LIB", "-DSPDLOG_FMT_EXTERNAL", "-o", "build/.objs/muduo_cpp20/linux/x86_64/debug/muduo/net/Socket.cpp.o", "muduo/net/Socket.cpp"],
+  "file": "muduo/net/Socket.cpp"
+},
+{
+  "directory": "/home/penguin/code/muduo_cpp20",
+  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DSPDLOG_SHARED_LIB", "-DSPDLOG_COMPILED_LIB", "-DSPDLOG_FMT_EXTERNAL", "-o", "build/.objs/muduo_cpp20/linux/x86_64/debug/muduo/net/EventLoop.cpp.o", "muduo/net/EventLoop.cpp"],
   "file": "muduo/net/EventLoop.cpp"
 },
 {
   "directory": "/home/penguin/code/muduo_cpp20",
-  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-fvisibility=hidden", "-fvisibility-inlines-hidden", "-O3", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DNDEBUG", "-o", "build/.objs/muduo_cpp20/linux/x86_64/release/muduo/net/Channel.cpp.o", "muduo/net/Channel.cpp"],
+  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DSPDLOG_SHARED_LIB", "-DSPDLOG_COMPILED_LIB", "-DSPDLOG_FMT_EXTERNAL", "-o", "build/.objs/muduo_cpp20/linux/x86_64/debug/muduo/net/Poller.cpp.o", "muduo/net/Poller.cpp"],
+  "file": "muduo/net/Poller.cpp"
+},
+{
+  "directory": "/home/penguin/code/muduo_cpp20",
+  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DSPDLOG_SHARED_LIB", "-DSPDLOG_COMPILED_LIB", "-DSPDLOG_FMT_EXTERNAL", "-o", "build/.objs/muduo_cpp20/linux/x86_64/debug/muduo/net/Channel.cpp.o", "muduo/net/Channel.cpp"],
   "file": "muduo/net/Channel.cpp"
+},
+{
+  "directory": "/home/penguin/code/muduo_cpp20",
+  "arguments": ["/usr/sbin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Imuduo/base", "-Imuduo/net", "-DSPDLOG_SHARED_LIB", "-DSPDLOG_COMPILED_LIB", "-DSPDLOG_FMT_EXTERNAL", "-o", "build/.objs/muduo_cpp20/linux/x86_64/debug/muduo/net/poller/EpollPoller.cpp.o", "muduo/net/poller/EpollPoller.cpp"],
+  "file": "muduo/net/poller/EpollPoller.cpp"
 }]

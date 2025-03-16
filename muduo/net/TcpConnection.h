@@ -36,8 +36,14 @@ public:
     void connectEstablished();
     void connectDestroyed();
 
+    bool connected() const { return state_ == kConnected; }
+
+    const InetAddress& peerAddress() const { return peerAddr_; }
+    const InetAddress& localAddress() const { return localAddr_; }
+
 private:
-    void handleRead();
+    void
+    handleRead();
     void handleWrite();
     void handleClose();
     void handleError();
