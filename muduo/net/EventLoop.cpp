@@ -1,22 +1,59 @@
 #include "EventLoop.h"
 #include "Channel.h"
+#include "Logging.h"
 #include "poller/EpollPoller.h"
 #include <chrono>
 #include <mutex>
 #include <queue>
+#include <ratio>
+#include <sys/eventfd.h>
 #include <thread>
 #include <vector>
 
 namespace muduo {
 namespace net {
 
+namespace {
+int createEventfd() {
+    int evtfd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
+    if (evtfd < 0) {
+        LOG_ERROR("Failed in eventfd creation");
+    }
+    return evtfd;
+}
+} // namespace
+
 EventLoop::EventLoop()
     : looping_(false)
     , quit_(false)
-    , poller_(std::make_unique<EpollPoller>(this)) {
+    , poller_(std::make_unique<EpollPoller>(this))
+    , timerQueue_(std::make_unique<TimerQueue>(this))
+    , wakeupFd_(createEventfd())
+    , wakeupChannel_(this, wakeupFd_) {
+    wakeupChannel_.setReadCallback([this] { handleWakeup(); });
+    wakeupChannel_.enableReading();
 }
 
 EventLoop::~EventLoop() {
+    wakeupChannel_.disableAll();
+    removeChannel(&wakeupChannel_);
+    close(wakeupFd_);
+}
+
+void EventLoop::wakeup() {
+    uint64_t one = 1;
+    ssize_t n = write(wakeupFd_, &one, sizeof one);
+    if (n != sizeof(one)) {
+        LOG_ERROR("EventLoop::wakeup() writes {} bytes instead of 8", n);
+    }
+}
+
+void EventLoop::handleWakeup() {
+    uint64_t one;
+    ssize_t n = read(wakeupFd_, &one, sizeof one);
+    if (n != sizeof(one)) {
+        LOG_ERROR("EventLoop::handleWakeup() reads {} bytes instead of 8", n);
+    }
 }
 
 void EventLoop::loop() {
@@ -47,6 +84,7 @@ void EventLoop::runInLoop(Functor cb) {
         std::lock_guard<std::mutex> lock(mutex_);
         pendingFunctors_.push(std::move(cb));
     }
+    wakeup();
 }
 
 void EventLoop::doPendingFunctors() {
@@ -67,6 +105,20 @@ void EventLoop::updateChannel(Channel* channel) {
 
 void EventLoop::removeChannel(Channel* channel) {
     poller_->removeChannel(channel);
+}
+
+void EventLoop::runAt(std::chrono::steady_clock::time_point time, Timer::TimerCallback cb) {
+    timerQueue_->addTimer(std::move(cb), time, std::chrono::milliseconds(0));
+}
+
+void EventLoop::runAfter(std::chrono::milliseconds delay, Timer::TimerCallback cb) {
+    auto time = std::chrono::steady_clock::now() + delay;
+    timerQueue_->addTimer(std::move(cb), time, std::chrono::milliseconds(0));
+}
+
+void EventLoop::runEvery(std::chrono::milliseconds interval, Timer::TimerCallback cb) {
+    auto time = std::chrono::steady_clock::now() + interval;
+    timerQueue_->addTimer(std::move(cb), time, interval);
 }
 
 }
