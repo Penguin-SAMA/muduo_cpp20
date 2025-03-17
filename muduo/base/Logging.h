@@ -8,7 +8,7 @@ namespace muduo {
 namespace base {
 
 // 初始化logger
-void initLogger(const std::string& loggerName = "muduo_logger");
+void initLogger(const std::string& loggerName = "muduo_logger", bool async = false);
 
 // 获取全局logger
 std::shared_ptr<spdlog::logger> getLogger();
