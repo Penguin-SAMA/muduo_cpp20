@@ -26,7 +26,7 @@ EpollPoller::~EpollPoller() {
 void EpollPoller::poll(int timeoutMs, ChannelList* activeChannels) {
     int numEvents = ::epoll_wait(epollfd_, events_.data(), events_.size(), timeoutMs);
     if (numEvents > 0) {
-        LOG_INFO("{} events happened", numEvents);
+        // LOG_INFO("{} events happened", numEvents);
         fillActiveChannels(numEvents, activeChannels);
     } else if (numEvents == 0) {
         LOG_TRACE("epoll_wait timeout");

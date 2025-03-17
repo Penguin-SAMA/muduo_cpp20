@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Acceptor.h"
+#include "EventLoopThreadPool.h"
 #include "InetAddress.h"
 #include "TcpConnection.h"
 #include <functional>
@@ -42,6 +43,8 @@ public:
     // 设置可读事件回调
     void setMessageCallback(const MessageCallback& cb) { messageCallback_ = cb; }
 
+    void setThreadNum(int numThreads);
+
     // 启动服务器
     void start();
 
@@ -63,6 +66,8 @@ private:
     std::unique_ptr<Acceptor> acceptor_; // 用于监听新连接
     bool started_;                       // 是否已经启动
     int nextConnId_;                     // 用于给新连接生成唯一名称
+    std::unique_ptr<EventLoopThreadPool> threadPool_;
+    int threadNum_;
 
     // 回调函数
     ConnectionCallback connectionCallback_;

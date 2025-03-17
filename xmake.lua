@@ -26,3 +26,10 @@ target("muduo_tests")
         add_defines("SPDLOG_DEBUG")
     end
 
+target("muduo")
+    set_kind("binary")
+    add_files("main.cpp")
+    add_deps("muduo_cpp20")
+    add_links("pthread", "gtest", "gtest_main")
+    add_includedirs("muduo/base", "muduo/net")
+    add_packages("spdlog")

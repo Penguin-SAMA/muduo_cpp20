@@ -1,6 +1,7 @@
 #include "TcpServer.h"
 #include "Acceptor.h"
 #include "EventLoop.h"
+#include "EventLoopThreadPool.h"
 #include "InetAddress.h"
 #include "Logging.h"
 #include "TcpConnection.h"
@@ -19,7 +20,8 @@ TcpServer::TcpServer(EventLoop* loop,
     , name_(name)
     , acceptor_(std::make_unique<Acceptor>(loop, listenAddr, reusePort))
     , started_(false)
-    , nextConnId_(1) {
+    , nextConnId_(1)
+    , threadNum_(0) {
     // 当 Acceptor 有新连接到达时调用
     acceptor_->setNewConnectionCallback([this](int sockfd, const InetAddress& peerAddr) {
         this->newConnection(sockfd, peerAddr);
@@ -32,9 +34,19 @@ TcpServer::~TcpServer() {
     LOG_INFO("TcpServer [{}] - dtor.", name_);
 }
 
+void TcpServer::setThreadNum(int numThreads) {
+    threadNum_ = numThreads;
+}
+
 void TcpServer::start() {
     if (!started_) {
         started_ = true;
+
+        if (!threadPool_) {
+            threadPool_ = std::make_unique<EventLoopThreadPool>(loop_, threadNum_);
+            threadPool_->start();
+        }
+
         acceptor_->listen();
         LOG_INFO("TcpServer [{}] started.", name_);
     }
@@ -43,11 +55,13 @@ void TcpServer::start() {
 void TcpServer::newConnection(int sockfd, const InetAddress& peerAddr) {
     // 这个函数在 Acceptor 对应的 Eventloop 线程中被调用
     // 为新连接创建 TcpConnection 对象
-    InetAddress localAddr;
+    EventLoop* ioLoop = threadPool_->getNextLoop();
+
     std::string connName = std::format("{}-conn{}", name_, nextConnId_++);
     LOG_INFO("TcpServer::newConnection [{}] - new connection: {}", name_, connName);
 
     // 使用 shared_ptr 管理 TcpConnection
+    InetAddress localAddr;
     auto conn = std::make_shared<TcpConnection>(
         loop_,     // 所属事件循环
         connName,  // 连接名称
@@ -69,7 +83,9 @@ void TcpServer::newConnection(int sockfd, const InetAddress& peerAddr) {
     });
 
     // 建立连接
-    conn->connectEstablished();
+    ioLoop->runInLoop([conn] {
+        conn->connectEstablished();
+    });
 }
 
 void TcpServer::removeConnection(const TcpConnectionPtr& conn) {

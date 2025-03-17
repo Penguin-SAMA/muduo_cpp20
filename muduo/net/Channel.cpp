@@ -1,5 +1,6 @@
 #include "Channel.h"
 #include "EventLoop.h"
+#include <sys/epoll.h>
 
 namespace muduo {
 namespace net {
@@ -25,20 +26,20 @@ void Channel::handleEvent() {
 void Channel::handleEventWithGuard() {
     // 根据revents_ 的值，调用对应的回调函数
     // 判断条件根据 poll 的返回值定义
-    if ((revents_ & 0x20) && closeCallback_) {
+    if ((revents_ & EPOLLHUP) || (revents_ & EPOLLRDHUP) || (revents_ & EPOLLERR)) {
         // 比如 EPOLLRDHUP 事件
-        closeCallback_();
-    } else if ((revents_ & 0x08) && errorCallback_) {
-        // 比如 EPOLLERR 事件
-        errorCallback_();
+        if (closeCallback_)
+            closeCallback_();
     } else {
-        if ((revents_ & 0x01) && readCallback_) {
+        if (revents_ & EPOLLIN) {
             // 比如 EPOLLIN 事件
-            readCallback_();
+            if (readCallback_)
+                readCallback_();
         }
-        if ((revents_ & 0x04) && writeCallback_) {
+        if (revents_ & EPOLLOUT) {
             // 比如 EPOLLOUT 事件
-            writeCallback_();
+            if (writeCallback_)
+                writeCallback_();
         }
     }
 }
