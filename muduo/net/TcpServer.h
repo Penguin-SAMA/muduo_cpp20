@@ -5,6 +5,7 @@
 #include "InetAddress.h"
 #include "TcpConnection.h"
 #include <functional>
+#include <map>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -45,6 +46,9 @@ public:
 
     void setThreadNum(int numThreads);
 
+    void setIdleTimeout(std::chrono::seconds timeout) { idleTimeout_ = timeout; }
+    void checkIdleConnection(const TcpConnectionPtr& conn);
+
     // 启动服务器
     void start();
 
@@ -68,6 +72,9 @@ private:
     int nextConnId_;                     // 用于给新连接生成唯一名称
     std::unique_ptr<EventLoopThreadPool> threadPool_;
     int threadNum_;
+
+    std::chrono::seconds idleTimeout_{60};
+    std::map<std::string, TimerId> connectionTimers_;
 
     // 回调函数
     ConnectionCallback connectionCallback_;

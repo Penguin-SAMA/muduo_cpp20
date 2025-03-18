@@ -3,9 +3,9 @@
 #include "Logging.h"
 #include "poller/EpollPoller.h"
 #include <chrono>
+#include <exception>
 #include <mutex>
 #include <queue>
-#include <ratio>
 #include <sys/eventfd.h>
 #include <thread>
 #include <vector>
@@ -29,7 +29,8 @@ EventLoop::EventLoop()
     , poller_(std::make_unique<EpollPoller>(this))
     , timerQueue_(std::make_unique<TimerQueue>(this))
     , wakeupFd_(createEventfd())
-    , wakeupChannel_(this, wakeupFd_) {
+    , wakeupChannel_(this, wakeupFd_)
+    , threadId_(std::this_thread::get_id()) {
     wakeupChannel_.setReadCallback([this] { handleWakeup(); });
     wakeupChannel_.enableReading();
 }
@@ -57,6 +58,7 @@ void EventLoop::handleWakeup() {
 }
 
 void EventLoop::loop() {
+    assertInLoopThread();
     looping_ = true;
     quit_ = false;
 
@@ -87,6 +89,16 @@ void EventLoop::runInLoop(Functor cb) {
     wakeup();
 }
 
+void EventLoop::assertInLoopThread() {
+    if (!isInLoopThread()) {
+        std::terminate();
+    }
+}
+
+void EventLoop::cancelTimer(TimerId timerId) {
+    timerQueue_->cancel(timerId);
+}
+
 void EventLoop::doPendingFunctors() {
     std::queue<Functor> functors;
     {
@@ -94,7 +106,13 @@ void EventLoop::doPendingFunctors() {
         std::swap(functors, pendingFunctors_);
     }
     while (!functors.empty()) {
-        functors.front()();
+        try {
+            functors.front()();
+        } catch (const std::exception& ex) {
+            LOG_ERROR("Exception in functor: {}", ex.what());
+        } catch (...) {
+            LOG_ERROR("Unknown exception in functor");
+        }
         functors.pop();
     }
 }
@@ -107,18 +125,18 @@ void EventLoop::removeChannel(Channel* channel) {
     poller_->removeChannel(channel);
 }
 
-void EventLoop::runAt(std::chrono::steady_clock::time_point time, Timer::TimerCallback cb) {
-    timerQueue_->addTimer(std::move(cb), time, std::chrono::milliseconds(0));
+TimerId EventLoop::runAt(std::chrono::steady_clock::time_point time, Timer::TimerCallback cb) {
+    return timerQueue_->addTimer(std::move(cb), time, std::chrono::milliseconds(0));
 }
 
-void EventLoop::runAfter(std::chrono::milliseconds delay, Timer::TimerCallback cb) {
+TimerId EventLoop::runAfter(std::chrono::milliseconds delay, Timer::TimerCallback cb) {
     auto time = std::chrono::steady_clock::now() + delay;
-    timerQueue_->addTimer(std::move(cb), time, std::chrono::milliseconds(0));
+    return timerQueue_->addTimer(std::move(cb), time, std::chrono::milliseconds(0));
 }
 
-void EventLoop::runEvery(std::chrono::milliseconds interval, Timer::TimerCallback cb) {
+TimerId EventLoop::runEvery(std::chrono::milliseconds interval, Timer::TimerCallback cb) {
     auto time = std::chrono::steady_clock::now() + interval;
-    timerQueue_->addTimer(std::move(cb), time, interval);
+    return timerQueue_->addTimer(std::move(cb), time, interval);
 }
 
 }

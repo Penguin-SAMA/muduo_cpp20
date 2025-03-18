@@ -5,6 +5,7 @@
 #include "EventLoop.h"
 #include "InetAddress.h"
 #include "Socket.h"
+#include <chrono>
 #include <functional>
 #include <memory>
 #include <string>
@@ -28,7 +29,7 @@ public:
     EventLoop* getLoop() const { return loop_; }
 
     void send(const std::string& message);
-    void shutdown();
+    virtual void shutdown();
 
     void setConnectionCallback(const ConnectionCallback& cb) { connectionCallback_ = cb; }
     void setMessageCallback(const MessageCallback& cb) { messageCallback_ = cb; }
@@ -39,8 +40,13 @@ public:
 
     bool connected() const { return state_ == kConnected; }
 
+    std::chrono::steady_clock::time_point lastReceiveTime() const { return lastReceiveTime_; }
+
     const InetAddress& peerAddress() const { return peerAddr_; }
     const InetAddress& localAddress() const { return localAddr_; }
+
+protected:
+    std::chrono::steady_clock::time_point lastReceiveTime_;
 
 private:
     void

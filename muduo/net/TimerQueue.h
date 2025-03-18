@@ -2,6 +2,7 @@
 
 #include "Channel.h"
 #include "Timer.h"
+#include "TimerId.h"
 #include <chrono>
 #include <memory>
 #include <set>
@@ -24,12 +25,14 @@ public:
 
     using TimerCallback = Timer::TimerCallback;
 
-    void addTimer(TimerCallback cb, std::chrono::steady_clock::time_point when, std::chrono::milliseconds interval);
+    TimerId addTimer(TimerCallback cb, std::chrono::steady_clock::time_point when, std::chrono::milliseconds interval);
+
+    void cancel(TimerId timerId);
 
 private:
     using TimerEntry = std::pair<std::chrono::steady_clock::time_point, Timer*>;
     using TimerList = std::set<TimerEntry>;
-    using TimerHolder = std::unordered_set<std::unique_ptr<Timer>>;
+    using TimerHolder = std::unordered_set<std::shared_ptr<Timer>>;
     void handleRead();
     std::vector<TimerEntry> getExpired(std::chrono::steady_clock::time_point now);
     void reset(const std::vector<TimerEntry>& expired, std::chrono::steady_clock::time_point now);

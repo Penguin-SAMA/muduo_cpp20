@@ -1,6 +1,7 @@
 #include "TimerQueue.h"
 #include "EventLoop.h"
 #include "Logging.h"
+#include "TimerId.h"
 #include <algorithm>
 #include <chrono>
 #include <cstdint>
@@ -46,22 +47,24 @@ TimerQueue::~TimerQueue() {
     close(timerfd_);
 }
 
-void TimerQueue::addTimer(
+TimerId TimerQueue::addTimer(
     TimerCallback cb,
     std::chrono::steady_clock::time_point when,
     std::chrono::milliseconds interval) {
-    loop_->runInLoop([this, cb = std::move(cb), when, interval]() mutable {
-        auto timer = std::make_unique<Timer>(std::move(cb), when, interval);
-        Timer* timerPtr = timer.get();
+    auto timer = std::make_shared<Timer>(std::move(cb), when, interval);
+    TimerId id(timer.get(), reinterpret_cast<int64_t>(timer.get()));
 
-        bool earliestChanged = timers_.empty() || when < timers_.begin()->first;
-        timers_.emplace(when, timerPtr);
-        timersHolder_.emplace(std::move(timer));
+    loop_->runInLoop([this, timer]() mutable {
+        bool earliestChanged = timers_.empty() || timer->expiration() < timers_.begin()->first;
+        timers_.emplace(timer->expiration(), timer.get());
+        timersHolder_.insert(timer);
 
         if (earliestChanged) {
-            resetTimerfd(when);
+            resetTimerfd(timers_.begin()->first);
         }
     });
+
+    return id;
 }
 
 void TimerQueue::handleRead() {
@@ -73,6 +76,25 @@ void TimerQueue::handleRead() {
         timer.second->run();
     }
     reset(expired, now);
+}
+
+void TimerQueue::cancel(TimerId timerId) {
+    loop_->runInLoop([this, timerId] {
+        auto it = std::find_if(timers_.begin(), timers_.end(),
+                               [timerId](const auto& entry) {
+                                   return entry.second == timerId.timer_;
+                               });
+        if (it != timers_.end()) {
+            auto itHolder = std::find_if(timersHolder_.begin(), timersHolder_.end(),
+                                         [timerId](const std::shared_ptr<Timer>& ptr) {
+                                             return ptr.get() == timerId.timer_;
+                                         });
+            if (itHolder != timersHolder_.end()) {
+                timersHolder_.erase(itHolder);
+            }
+            timers_.erase(it);
+        }
+    });
 }
 
 std::vector<TimerQueue::TimerEntry> TimerQueue::getExpired(std::chrono::steady_clock::time_point now) {
@@ -94,7 +116,7 @@ void TimerQueue::reset(const std::vector<TimerEntry>& expired,
             timers_.emplace(timer->expiration(), timer);
         } else {
             auto it = std::find_if(timersHolder_.begin(), timersHolder_.end(),
-                                   [timer](const std::unique_ptr<Timer>& t) { return t.get() == timer; });
+                                   [timer](const std::shared_ptr<Timer>& t) { return t.get() == timer; });
             if (it != timersHolder_.end()) {
                 timersHolder_.erase(it);
             }

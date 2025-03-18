@@ -1,6 +1,7 @@
 #include "TcpConnection.h"
 #include "Channel.h"
 #include "Logging.h"
+#include <chrono>
 #include <cstddef>
 #include <cstring>
 #include <memory>
@@ -20,7 +21,8 @@ TcpConnection::TcpConnection(EventLoop* loop, const std::string& name, int sockf
     , socket_(std::make_unique<Socket>(sockfd))
     , channel_(std::make_unique<Channel>(loop, sockfd))
     , localAddr_(localAddr)
-    , peerAddr_(peerAddr) {
+    , peerAddr_(peerAddr)
+    , lastReceiveTime_(std::chrono::steady_clock::now()) {
     channel_->setReadCallback([this]() { handleRead(); });
     channel_->setWriteCallback([this]() { handleWrite(); });
     channel_->setCloseCallback([this]() { handleClose(); });
@@ -82,6 +84,7 @@ void TcpConnection::connectDestroyed() {
 
 void TcpConnection::handleRead() {
     int savedErrno = 0;
+    lastReceiveTime_ = std::chrono::steady_clock::now();
     ssize_t n = inputBuffer_.readFd(channel_->fd(), &savedErrno);
     if (n > 0) {
         std::string msg(inputBuffer_.peek(), inputBuffer_.readableBytes());
@@ -122,6 +125,7 @@ void TcpConnection::handleClose() {
 
 void TcpConnection::handleError() {
     LOG_ERROR("TcpConnection::handleError: socket error");
+    handleClose();
 }
 
 }

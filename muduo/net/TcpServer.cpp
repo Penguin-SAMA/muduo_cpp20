@@ -5,6 +5,8 @@
 #include "InetAddress.h"
 #include "Logging.h"
 #include "TcpConnection.h"
+#include "TimerId.h"
+#include <chrono>
 #include <format>
 #include <memory>
 #include <string>
@@ -56,11 +58,7 @@ void TcpServer::newConnection(int sockfd, const InetAddress& peerAddr) {
     // 这个函数在 Acceptor 对应的 Eventloop 线程中被调用
     // 为新连接创建 TcpConnection 对象
     EventLoop* ioLoop = threadPool_->getNextLoop();
-
     std::string connName = std::format("{}-conn{}", name_, nextConnId_++);
-    LOG_INFO("TcpServer::newConnection [{}] - new connection: {}", name_, connName);
-
-    // 使用 shared_ptr 管理 TcpConnection
     InetAddress localAddr;
     auto conn = std::make_shared<TcpConnection>(
         loop_,     // 所属事件循环
@@ -76,16 +74,27 @@ void TcpServer::newConnection(int sockfd, const InetAddress& peerAddr) {
     // 设置用户自定义的回调
     conn->setConnectionCallback(connectionCallback_);
     conn->setMessageCallback(messageCallback_);
-
     // 设置关闭回调，以便在连接关闭时通知 TcpServer 移除此连接
     conn->setCloseCallback([this](const TcpConnectionPtr& c) {
         removeConnection(c);
     });
-
     // 建立连接
-    ioLoop->runInLoop([conn] {
-        conn->connectEstablished();
+    ioLoop->runInLoop([conn] { conn->connectEstablished(); });
+
+    TimerId timerId = ioLoop->runEvery(idleTimeout_, [this, conn] {
+        checkIdleConnection(conn);
     });
+
+    connectionTimers_[connName] = timerId;
+}
+
+void TcpServer::checkIdleConnection(const TcpConnectionPtr& conn) {
+    auto now = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::seconds>(now - conn->lastReceiveTime());
+    if (duration > idleTimeout_) {
+        LOG_INFO("connection [{}] idle for {} seconds, shutting down.", conn->name(), duration.count());
+        conn->shutdown();
+    }
 }
 
 void TcpServer::removeConnection(const TcpConnectionPtr& conn) {
@@ -95,20 +104,17 @@ void TcpServer::removeConnection(const TcpConnectionPtr& conn) {
 }
 
 void TcpServer::removeConnectionInLoop(const TcpConnectionPtr& conn) {
+    loop_->assertInLoopThread();
     LOG_INFO("TcpServer::removeConnectionInLoop [{}] - conn name: {}", name_, conn->name());
 
-    if (!connections_.contains(conn->name())) {
-        // 理论上不会发生
-        LOG_WARN("removeConnectionInLoop - connection {} not found!", conn->name());
-        return;
-    }
-
     // 从map移除
-    size_t n = connections_.erase(conn->name());
-    LOG_INFO("TcpServer::removeConnectionInLoop [{}] - conn erased, count={}", conn->name(), n);
+    connections_.erase(conn->name());
 
-    // 销毁连接
-    conn->connectDestroyed();
+    auto it = connectionTimers_.find(conn->name());
+    if (it != connectionTimers_.end()) {
+        loop_->cancelTimer(it->second);
+        connectionTimers_.erase(it);
+    }
 }
 
 }
